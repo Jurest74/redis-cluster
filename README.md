@@ -14,26 +14,32 @@
 
 DOCKER
 
+```
 sudo amazon-linux-extras install docker -y
 sudo yum install git -y
-
 sudo systemctl enable docker
 sudo systemctl start docker
 sudo usermod -a -G docker ec2-user
+```
+
 
 DOCKER-COMPOSE
 
+
+```
 sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 exit
+```
+
 
 - Luego cree el archivo docker-compose.yml y copie el siguiente script en él para la configuración
-
-version: '2.2'
-services:
-  redis01-master:
-    image: redis 
-    user: root
+```
+version: '2.2' 
+services:  
+  redis01-master:  
+    image: redis   
+    user: root  
     sysctls:
       net.core.somaxconn: 20000
     ulimits:
@@ -121,12 +127,14 @@ networks:
       config:
         - subnet: 173.17.0.0/16
         - gateway: 173.17.0.1
+```
+
         
         
         
         
 - Configuración para los nodos de REDIS en redis.conf
-
+```
 bind 173.17.0.10 
 modo protegido sin 
 puerto 6379 
@@ -142,10 +150,11 @@ logfile "/var/log/redis/redis.log"
 #logfile "/var/log/redis/redis01-master/redis.log" 
 repl-diskless-sync sí 
 repl-diskless-sync-delay 3
-
+```
 
 <h4>Inicializar el clúster</h4>
 
 Una vez que todos los contenedores estén en funcionamiento, conéctese a cualquiera de los nodos de REDIS y ejecute el siguiente comando para inicializar el clúster.
-
+```
 redis-cli --cluster crear 173.17.0.10:6379 173.17.0.40:6384 173.17.0.50:6382 173.17.0.60:6383 --cluster-replicas 1
+```
